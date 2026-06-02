@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Reports · Inventory</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+</head>
+<body>
+<div class="app-shell">
+  <aside class="sidebar">
+    <div class="sidebar__brand">
+      <div class="brand__logo">IM</div>
+      <div class="brand__text">
+        <span class="brand__title">Inventory</span>
+        <span class="brand__subtitle">Management</span>
+      </div>
+    </div>
+    <nav class="sidebar__nav">
+      <a class="nav-item" href="index.html"><i class="fa-solid fa-gauge-high"></i><span>Dashboard</span></a>
+      <a class="nav-item" href="products.html"><i class="fa-solid fa-boxes-stacked"></i><span>Products</span></a>
+      <a class="nav-item" href="categories.html"><i class="fa-solid fa-layer-group"></i><span>Categories</span></a>
+      <a class="nav-item" href="stock.html"><i class="fa-solid fa-right-left"></i><span>Stock</span></a>
+      <a class="nav-item" href="sales.html"><i class="fa-solid fa-receipt"></i><span>Sales</span></a>
+      <a class="nav-item nav-item--active" href="reports.html"><i class="fa-solid fa-chart-line"></i><span>Reports</span></a>
+    </nav>
+    <div class="sidebar__footer">Reports</div>
+  </aside>
+
+  <div class="main">
+    <header class="topbar">
+      <div class="topbar__left">
+        <h1 class="page-title">Reports</h1>
+        <p class="page-subtitle">Export and explore inventory, sales, and low stock.</p>
+      </div>
+      <div class="topbar__right">
+        <div class="user-card">
+          <div class="user-card__info">
+            <span class="user-card__name" id="current-user-name">—</span>
+            <span class="user-card__role" id="current-user-email">—</span>
+          </div>
+          <div class="user-card__avatar" id="current-user-avatar">?</div>
+        </div>
+        <button type="button" class="btn btn--ghost btn--sm" id="logout-btn" title="Log out"><i class="fa-solid fa-right-from-bracket"></i> Log out</button>
+      </div>
+    </header>
+
+    <main class="content">
+      <div class="report-tabs">
+        <button type="button" class="report-tab report-tab--active" data-tab="inventory">Inventory</button>
+        <button type="button" class="report-tab" data-tab="sales">Sales</button>
+        <button type="button" class="report-tab" data-tab="low-stock">Low stock</button>
+      </div>
+
+      <div id="report-inventory" class="report-section card" style="display:block">
+        <div class="card__header">
+          <div>
+            <h2 class="card__title">Inventory report</h2>
+            <p class="card__subtitle">All products with valuation and status.</p>
+          </div>
+          <button type="button" class="btn btn--ghost" id="export-inventory"><i class="fa-solid fa-download"></i> CSV</button>
+        </div>
+        <div class="card__body" style="padding:0">
+          <div class="table-wrapper">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Product</th>
+                  <th>Category</th>
+                  <th>Supplier</th>
+                  <th class="text-right">Price</th>
+                  <th class="text-right">Qty</th>
+                  <th class="text-right">Min</th>
+                  <th class="text-right">Value</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody id="inventory-report-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div id="report-sales" class="report-section card" style="display:none">
+        <div class="card__header">
+          <div>
+            <h2 class="card__title">Sales report</h2>
+            <p class="card__subtitle">Aggregated performance.</p>
+          </div>
+          <div style="display:flex;gap:0.5rem;align-items:center;flex-wrap:wrap">
+            <select class="select" id="sales-report-period">
+              <option value="daily">Daily</option>
+              <option value="monthly">Monthly</option>
+            </select>
+            <button type="button" class="btn btn--ghost" id="export-sales"><i class="fa-solid fa-download"></i> CSV</button>
+          </div>
+        </div>
+        <div class="card__body">
+          <div class="chart-box chart-box--sm"><canvas id="sales-report-chart"></canvas></div>
+          <div class="table-wrapper" style="margin-top:1rem">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th id="sales-report-period-header">Date</th>
+                  <th class="text-right">Sales</th>
+                  <th class="text-right">Items</th>
+                  <th class="text-right">Revenue</th>
+                </tr>
+              </thead>
+              <tbody id="sales-report-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div id="report-low-stock" class="report-section card" style="display:none">
+        <div class="card__header">
+          <div>
+            <h2 class="card__title">Low stock report</h2>
+            <p class="card__subtitle">Items at or below minimum levels.</p>
+          </div>
+          <button type="button" class="btn btn--ghost" id="export-low-stock"><i class="fa-solid fa-download"></i> CSV</button>
+        </div>
+        <div class="card__body" style="padding:0">
+          <div class="table-wrapper">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Product</th>
+                  <th>Category</th>
+                  <th class="text-right">Qty</th>
+                  <th class="text-right">Min</th>
+                  <th class="text-right">Gap</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody id="low-stock-report-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<script src="apiClient.js"></script>
+<script src="guard.js"></script>
+<script src="reports.js"></script>
+</body>
+</html>

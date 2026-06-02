@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Stock · Inventory</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" />
+</head>
+<body>
+<div class="app-shell">
+  <aside class="sidebar">
+    <div class="sidebar__brand">
+      <div class="brand__logo">IM</div>
+      <div class="brand__text">
+        <span class="brand__title">Inventory</span>
+        <span class="brand__subtitle">Management</span>
+      </div>
+    </div>
+    <nav class="sidebar__nav">
+      <a class="nav-item" href="index.html"><i class="fa-solid fa-gauge-high"></i><span>Dashboard</span></a>
+      <a class="nav-item" href="products.html"><i class="fa-solid fa-boxes-stacked"></i><span>Products</span></a>
+      <a class="nav-item" href="categories.html"><i class="fa-solid fa-layer-group"></i><span>Categories</span></a>
+      <a class="nav-item nav-item--active" href="stock.html"><i class="fa-solid fa-right-left"></i><span>Stock</span></a>
+      <a class="nav-item" href="sales.html"><i class="fa-solid fa-receipt"></i><span>Sales</span></a>
+      <a class="nav-item" href="reports.html"><i class="fa-solid fa-chart-line"></i><span>Reports</span></a>
+    </nav>
+    <div class="sidebar__footer">Stock</div>
+  </aside>
+
+  <div class="main">
+    <header class="topbar">
+      <div class="topbar__left">
+        <h1 class="page-title">Stock movements</h1>
+        <p class="page-subtitle">Record stock in/out and review transaction history.</p>
+      </div>
+      <div class="topbar__right">
+        <div class="user-card">
+          <div class="user-card__info">
+            <span class="user-card__name" id="current-user-name">—</span>
+            <span class="user-card__role" id="current-user-email">—</span>
+          </div>
+          <div class="user-card__avatar" id="current-user-avatar">?</div>
+        </div>
+        <button type="button" class="btn btn--ghost btn--sm" id="logout-btn" title="Log out"><i class="fa-solid fa-right-from-bracket"></i> Log out</button>
+      </div>
+    </header>
+
+    <main class="content">
+      <div class="toolbar">
+        <input type="date" id="stock-date-from" />
+        <input type="date" id="stock-date-to" />
+        <select class="select" id="stock-movement-type-filter">
+          <option value="ALL">All types</option>
+          <option value="IN">Stock in</option>
+          <option value="OUT">Stock out</option>
+        </select>
+        <input class="toolbar__search" type="search" id="stock-product-search" placeholder="Search product…" />
+        <button type="button" class="btn" id="btn-stock-in"><i class="fa-solid fa-arrow-down"></i> Stock in</button>
+        <button type="button" class="btn btn--ghost" id="btn-stock-out"><i class="fa-solid fa-arrow-up"></i> Stock out</button>
+      </div>
+
+      <div class="card">
+        <div class="card__body" style="padding:0">
+          <div class="table-wrapper">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>When</th>
+                  <th>Product</th>
+                  <th>Type</th>
+                  <th class="text-right">Qty</th>
+                  <th>Reason</th>
+                </tr>
+              </thead>
+              <tbody id="stock-transactions-table-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<div id="stock-modal-backdrop" class="modal-backdrop">
+  <div class="modal modal--wide" role="dialog">
+    <div class="modal__header">
+      <h2 class="modal__title" id="stock-modal-title">Stock movement</h2>
+      <button type="button" class="modal__close" id="stock-modal-close">&times;</button>
+    </div>
+    <div class="modal__body">
+      <div class="form-row">
+        <label class="field-label" for="modal-stock-product">Product</label>
+        <select id="modal-stock-product" style="width:100%"><option value="">Select product</option></select>
+      </div>
+      <p id="modal-stock-current-qty" class="text-muted" style="min-height:1.25rem"></p>
+      <div class="form-row form-row--2">
+        <div>
+          <label class="field-label" for="modal-stock-quantity">Quantity</label>
+          <input id="modal-stock-quantity" type="number" min="1" style="width:100%" />
+        </div>
+        <div>
+          <label class="field-label" for="modal-stock-date">Date &amp; time</label>
+          <input id="modal-stock-date" type="datetime-local" style="width:100%" />
+        </div>
+      </div>
+      <div class="form-row">
+        <label class="field-label" for="modal-stock-reason">Reason / note</label>
+        <input id="modal-stock-reason" type="text" style="width:100%" placeholder="Optional" />
+      </div>
+      <div id="stock-modal-message" class="auth-message"></div>
+    </div>
+    <div class="modal__footer">
+      <button type="button" class="btn btn--ghost" id="stock-modal-cancel">Cancel</button>
+      <button type="button" class="btn" id="stock-modal-save">Save</button>
+    </div>
+  </div>
+</div>
+
+<script src="apiClient.js"></script>
+<script src="guard.js"></script>
+<script src="stock.js"></script>
+</body>
+</html>

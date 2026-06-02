@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Categories · Inventory</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" />
+</head>
+<body>
+<div class="app-shell">
+  <aside class="sidebar">
+    <div class="sidebar__brand">
+      <div class="brand__logo">IM</div>
+      <div class="brand__text">
+        <span class="brand__title">Inventory</span>
+        <span class="brand__subtitle">Management</span>
+      </div>
+    </div>
+    <nav class="sidebar__nav">
+      <a class="nav-item" href="index.html"><i class="fa-solid fa-gauge-high"></i><span>Dashboard</span></a>
+      <a class="nav-item" href="products.html"><i class="fa-solid fa-boxes-stacked"></i><span>Products</span></a>
+      <a class="nav-item nav-item--active" href="categories.html"><i class="fa-solid fa-layer-group"></i><span>Categories</span></a>
+      <a class="nav-item" href="stock.html"><i class="fa-solid fa-right-left"></i><span>Stock</span></a>
+      <a class="nav-item" href="sales.html"><i class="fa-solid fa-receipt"></i><span>Sales</span></a>
+      <a class="nav-item" href="reports.html"><i class="fa-solid fa-chart-line"></i><span>Reports</span></a>
+    </nav>
+    <div class="sidebar__footer">Categories</div>
+  </aside>
+
+  <div class="main">
+    <header class="topbar">
+      <div class="topbar__left">
+        <h1 class="page-title">Categories</h1>
+        <p class="page-subtitle">Organize products with descriptions and counts.</p>
+      </div>
+      <div class="topbar__right">
+        <div class="user-card">
+          <div class="user-card__info">
+            <span class="user-card__name" id="current-user-name">—</span>
+            <span class="user-card__role" id="current-user-email">—</span>
+          </div>
+          <div class="user-card__avatar" id="current-user-avatar">?</div>
+        </div>
+        <button type="button" class="btn btn--ghost btn--sm" id="logout-btn" title="Log out"><i class="fa-solid fa-right-from-bracket"></i> Log out</button>
+      </div>
+    </header>
+
+    <main class="content">
+      <div class="toolbar">
+        <input class="toolbar__search" type="search" id="category-search" placeholder="Search categories…" />
+        <button type="button" class="btn" id="btn-new-category"><i class="fa-solid fa-plus"></i> New category</button>
+      </div>
+
+      <div class="card">
+        <div class="card__body" style="padding:0">
+          <div class="table-wrapper">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Description</th>
+                  <th class="text-right">Products</th>
+                  <th>Created</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="categories-table-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<div id="category-modal-backdrop" class="modal-backdrop">
+  <div class="modal modal--wide" role="dialog">
+    <div class="modal__header">
+      <h2 class="modal__title" id="category-modal-title">New Category</h2>
+      <button type="button" class="modal__close" id="category-modal-close">&times;</button>
+    </div>
+    <div class="modal__body">
+      <div class="form-row">
+        <label class="field-label" for="modal-category-name">Name</label>
+        <input id="modal-category-name" type="text" style="width:100%" />
+      </div>
+      <div class="form-row">
+        <label class="field-label" for="modal-category-description">Description</label>
+        <textarea id="modal-category-description" rows="3" style="width:100%"></textarea>
+      </div>
+      <div id="category-modal-message" class="auth-message"></div>
+    </div>
+    <div class="modal__footer">
+      <button type="button" class="btn btn--ghost" id="category-modal-cancel">Cancel</button>
+      <button type="button" class="btn" id="category-modal-save">Save</button>
+    </div>
+  </div>
+</div>
+
+<div id="delete-modal-backdrop" class="modal-backdrop">
+  <div class="modal" role="dialog">
+    <div class="modal__header">
+      <h2 class="modal__title">Delete category</h2>
+      <button type="button" class="modal__close" id="delete-modal-close">&times;</button>
+    </div>
+    <div class="modal__body">
+      <p id="delete-modal-message" class="text-muted"></p>
+      <p id="delete-modal-error" class="auth-message auth-message--error" style="display:none"></p>
+    </div>
+    <div class="modal__footer">
+      <button type="button" class="btn btn--ghost" id="delete-modal-cancel">Cancel</button>
+      <button type="button" class="btn" id="delete-modal-confirm" style="background:var(--danger)">Delete</button>
+    </div>
+  </div>
+</div>
+
+<script src="apiClient.js"></script>
+<script src="guard.js"></script>
+<script src="categories.js"></script>
+</body>
+</html>

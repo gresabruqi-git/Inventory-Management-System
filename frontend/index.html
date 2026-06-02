@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard · Inventory</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+</head>
+<body>
+<div class="app-shell">
+  <aside class="sidebar">
+    <div class="sidebar__brand">
+      <div class="brand__logo">IM</div>
+      <div class="brand__text">
+        <span class="brand__title">Inventory</span>
+        <span class="brand__subtitle">Management</span>
+      </div>
+    </div>
+    <nav class="sidebar__nav">
+      <a class="nav-item nav-item--active" href="index.html"><i class="fa-solid fa-gauge-high"></i><span>Dashboard</span></a>
+      <a class="nav-item" href="products.html"><i class="fa-solid fa-boxes-stacked"></i><span>Products</span></a>
+      <a class="nav-item" href="categories.html"><i class="fa-solid fa-layer-group"></i><span>Categories</span></a>
+      <a class="nav-item" href="stock.html"><i class="fa-solid fa-right-left"></i><span>Stock</span></a>
+      <a class="nav-item" href="sales.html"><i class="fa-solid fa-receipt"></i><span>Sales</span></a>
+      <a class="nav-item" href="reports.html"><i class="fa-solid fa-chart-line"></i><span>Reports</span></a>
+    </nav>
+    <div class="sidebar__footer">SQL Server · API</div>
+  </aside>
+
+  <div class="main">
+    <header class="topbar">
+      <div class="topbar__left">
+        <h1 class="page-title">Dashboard</h1>
+        <p class="page-subtitle">Live overview from your inventory data.</p>
+      </div>
+      <div class="topbar__right">
+        <div class="user-card">
+          <div class="user-card__info">
+            <span class="user-card__name" id="current-user-name">—</span>
+            <span class="user-card__role" id="current-user-email">—</span>
+          </div>
+          <div class="user-card__avatar" id="current-user-avatar">?</div>
+        </div>
+        <button type="button" class="btn btn--ghost btn--sm" id="logout-btn" title="Log out"><i class="fa-solid fa-right-from-bracket"></i> Log out</button>
+      </div>
+    </header>
+
+    <main class="content">
+      <section class="grid grid--4">
+        <div class="card kpi-card">
+          <div class="kpi-card__header">
+            <span class="kpi-card__label">Total products</span>
+            <span class="kpi-card__icon kpi-card__icon--primary"><i class="fa-solid fa-box"></i></span>
+          </div>
+          <div class="kpi-card__value" id="kpi-total-products">—</div>
+          <div class="kpi-card__trend"><span class="kpi-card__trend-label">Active SKUs in catalog</span></div>
+        </div>
+        <div class="card kpi-card">
+          <div class="kpi-card__header">
+            <span class="kpi-card__label">Low stock SKUs</span>
+            <span class="kpi-card__icon kpi-card__icon--warning"><i class="fa-solid fa-triangle-exclamation"></i></span>
+          </div>
+          <div class="kpi-card__value" id="kpi-low-stock">—</div>
+          <div class="kpi-card__trend"><span class="kpi-card__trend-label">Qty ≤ minimum level</span></div>
+        </div>
+        <div class="card kpi-card">
+          <div class="kpi-card__header">
+            <span class="kpi-card__label">Stock value</span>
+            <span class="kpi-card__icon kpi-card__icon--success"><i class="fa-solid fa-sack-dollar"></i></span>
+          </div>
+          <div class="kpi-card__value" id="kpi-stock-value">—</div>
+          <div class="kpi-card__trend"><span class="kpi-card__trend-label">Σ price × quantity</span></div>
+        </div>
+        <div class="card kpi-card">
+          <div class="kpi-card__header">
+            <span class="kpi-card__label">Sales (this month)</span>
+            <span class="kpi-card__icon kpi-card__icon--info"><i class="fa-solid fa-chart-line"></i></span>
+          </div>
+          <div class="kpi-card__value" id="kpi-total-sales">—</div>
+          <div class="kpi-card__trend"><span class="kpi-card__trend-label">Revenue from sales table</span></div>
+        </div>
+      </section>
+
+      <section class="grid grid--2">
+        <div class="card">
+          <div class="card__header">
+            <div>
+              <h2 class="card__title">Stock in vs out</h2>
+              <p class="card__subtitle">By calendar month (from stock transactions).</p>
+            </div>
+          </div>
+          <div class="card__body">
+            <div class="chart-box"><canvas id="stockChart"></canvas></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card__header">
+            <div>
+              <h2 class="card__title">Top sellers</h2>
+              <p class="card__subtitle">Units sold (all time, from sales).</p>
+            </div>
+          </div>
+          <div class="card__body">
+            <div class="chart-box"><canvas id="bestSellersChart"></canvas></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="grid grid--1">
+        <div class="card">
+          <div class="card__header">
+            <div>
+              <h2 class="card__title">Low stock</h2>
+              <p class="card__subtitle">Products at or below minimum quantity.</p>
+            </div>
+          </div>
+          <div class="card__body">
+            <div class="table-wrapper">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Product</th>
+                    <th>Category</th>
+                    <th class="text-right">Qty</th>
+                    <th class="text-right">Min</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody id="low-stock-table-body"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+</div>
+<script src="apiClient.js"></script>
+<script src="guard.js"></script>
+<script src="dashboard.js"></script>
+</body>
+</html>

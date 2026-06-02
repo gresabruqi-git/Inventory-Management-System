@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sales · Inventory</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+</head>
+<body>
+<div class="app-shell">
+  <aside class="sidebar">
+    <div class="sidebar__brand">
+      <div class="brand__logo">IM</div>
+      <div class="brand__text">
+        <span class="brand__title">Inventory</span>
+        <span class="brand__subtitle">Management</span>
+      </div>
+    </div>
+    <nav class="sidebar__nav">
+      <a class="nav-item" href="index.html"><i class="fa-solid fa-gauge-high"></i><span>Dashboard</span></a>
+      <a class="nav-item" href="products.html"><i class="fa-solid fa-boxes-stacked"></i><span>Products</span></a>
+      <a class="nav-item" href="categories.html"><i class="fa-solid fa-layer-group"></i><span>Categories</span></a>
+      <a class="nav-item" href="stock.html"><i class="fa-solid fa-right-left"></i><span>Stock</span></a>
+      <a class="nav-item nav-item--active" href="sales.html"><i class="fa-solid fa-receipt"></i><span>Sales</span></a>
+      <a class="nav-item" href="reports.html"><i class="fa-solid fa-chart-line"></i><span>Reports</span></a>
+    </nav>
+    <div class="sidebar__footer">Sales</div>
+  </aside>
+
+  <div class="main">
+    <header class="topbar">
+      <div class="topbar__left">
+        <h1 class="page-title">Sales</h1>
+        <p class="page-subtitle">Record orders and analyze revenue.</p>
+      </div>
+      <div class="topbar__right">
+        <button type="button" class="btn btn--ghost" id="btn-export-sales-csv"><i class="fa-solid fa-download"></i> Export CSV</button>
+        <div class="user-card">
+          <div class="user-card__info">
+            <span class="user-card__name" id="current-user-name">—</span>
+            <span class="user-card__role" id="current-user-email">—</span>
+          </div>
+          <div class="user-card__avatar" id="current-user-avatar">?</div>
+        </div>
+        <button type="button" class="btn btn--ghost btn--sm" id="logout-btn" title="Log out"><i class="fa-solid fa-right-from-bracket"></i> Log out</button>
+      </div>
+    </header>
+
+    <main class="content">
+      <section class="grid grid--4">
+        <div class="card kpi-card">
+          <div class="kpi-card__header">
+            <span class="kpi-card__label">Today</span>
+            <span class="kpi-card__icon kpi-card__icon--success"><i class="fa-solid fa-sun"></i></span>
+          </div>
+          <div class="kpi-card__value" id="kpi-today-sales">—</div>
+          <div class="kpi-card__trend"><span class="kpi-card__trend-label" id="kpi-today-count">—</span></div>
+        </div>
+        <div class="card kpi-card">
+          <div class="kpi-card__header">
+            <span class="kpi-card__label">This month</span>
+            <span class="kpi-card__icon kpi-card__icon--primary"><i class="fa-solid fa-calendar"></i></span>
+          </div>
+          <div class="kpi-card__value" id="kpi-month-sales">—</div>
+          <div class="kpi-card__trend"><span class="kpi-card__trend-label" id="kpi-month-count">—</span></div>
+        </div>
+        <div class="card kpi-card">
+          <div class="kpi-card__header">
+            <span class="kpi-card__label">Items sold (month)</span>
+            <span class="kpi-card__icon kpi-card__icon--info"><i class="fa-solid fa-box"></i></span>
+          </div>
+          <div class="kpi-card__value" id="kpi-items-sold">—</div>
+          <div class="kpi-card__trend"><span class="kpi-card__trend-label">Units</span></div>
+        </div>
+        <div class="card kpi-card">
+          <div class="kpi-card__header">
+            <span class="kpi-card__label">Avg sale (month)</span>
+            <span class="kpi-card__icon kpi-card__icon--warning"><i class="fa-solid fa-chart-simple"></i></span>
+          </div>
+          <div class="kpi-card__value" id="kpi-avg-sale">—</div>
+          <div class="kpi-card__trend"><span class="kpi-card__trend-label">Per transaction</span></div>
+        </div>
+      </section>
+
+      <div class="toolbar">
+        <input type="date" id="sales-date-from" />
+        <input type="date" id="sales-date-to" />
+        <input class="toolbar__search" type="search" id="sales-product-search" placeholder="Search product…" />
+        <button type="button" class="btn btn--sm btn--ghost" id="filter-today">Today</button>
+        <button type="button" class="btn btn--sm btn--ghost" id="filter-week">7 days</button>
+        <button type="button" class="btn btn--sm btn--ghost" id="filter-month">30 days</button>
+        <button type="button" class="btn" id="btn-new-sale"><i class="fa-solid fa-plus"></i> New sale</button>
+      </div>
+
+      <section class="grid grid--2">
+        <div class="card">
+          <div class="card__header"><h2 class="card__title">Revenue (7 days)</h2></div>
+          <div class="card__body"><div class="chart-box chart-box--sm"><canvas id="sales-daily-chart"></canvas></div></div>
+        </div>
+        <div class="card">
+          <div class="card__header"><h2 class="card__title">Top products by qty</h2></div>
+          <div class="card__body"><div class="chart-box chart-box--sm"><canvas id="sales-top-chart"></canvas></div></div>
+        </div>
+      </section>
+
+      <div class="card">
+        <div class="card__body" style="padding:0">
+          <div class="table-wrapper">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Product</th>
+                  <th class="text-right">Qty</th>
+                  <th class="text-right">Unit</th>
+                  <th class="text-right">Total</th>
+                </tr>
+              </thead>
+              <tbody id="sales-table-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<div id="sale-modal-backdrop" class="modal-backdrop">
+  <div class="modal modal--wide" role="dialog">
+    <div class="modal__header">
+      <h2 class="modal__title">New sale</h2>
+      <button type="button" class="modal__close" id="sale-modal-close">&times;</button>
+    </div>
+    <div class="modal__body">
+      <div class="form-row">
+        <label class="field-label" for="modal-sale-product">Product</label>
+        <select id="modal-sale-product" style="width:100%"><option value="">Select product</option></select>
+      </div>
+      <p id="modal-sale-product-info" class="text-muted" style="min-height:1.25rem"></p>
+      <div class="form-row form-row--2">
+        <div>
+          <label class="field-label" for="modal-sale-quantity">Quantity</label>
+          <input id="modal-sale-quantity" type="number" min="1" style="width:100%" />
+        </div>
+        <div>
+          <label class="field-label" for="modal-sale-unit-price">Unit price</label>
+          <input id="modal-sale-unit-price" type="number" step="0.01" min="0" style="width:100%" />
+        </div>
+      </div>
+      <div class="form-row">
+        <label class="field-label" for="modal-sale-total-price">Line total</label>
+        <input id="modal-sale-total-price" type="text" readonly style="width:100%" />
+      </div>
+      <div class="form-row">
+        <label class="field-label" for="modal-sale-date">Sale date</label>
+        <input id="modal-sale-date" type="datetime-local" style="width:100%" />
+      </div>
+      <div id="sale-modal-message" class="auth-message"></div>
+    </div>
+    <div class="modal__footer">
+      <button type="button" class="btn btn--ghost" id="sale-modal-cancel">Cancel</button>
+      <button type="button" class="btn" id="sale-modal-save">Save</button>
+    </div>
+  </div>
+</div>
+
+<div id="sale-details-backdrop" class="modal-backdrop">
+  <div class="modal" role="dialog">
+    <div class="modal__header">
+      <h2 class="modal__title">Sale details</h2>
+      <button type="button" class="modal__close" id="sale-details-close">&times;</button>
+    </div>
+    <div class="modal__body" id="sale-details-body"></div>
+  </div>
+</div>
+
+<script src="apiClient.js"></script>
+<script src="guard.js"></script>
+<script src="sales.js"></script>
+</body>
+</html>
