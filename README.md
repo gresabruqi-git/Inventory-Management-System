@@ -274,4 +274,6 @@ This project is provided for educational and demonstration purposes. Specify a l
 
 ## Author
 
+**Gresa Bruqi**
+
 Developed as an academic inventory management system demonstrating REST API design, relational database modeling, and secure web client patterns.
